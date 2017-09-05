@@ -1,0 +1,11 @@
+
+nimcache/
+nimsuggest.log
+
+cppscraping.exe
+cppscraping
+genincludes.exe
+genincludes
+
+site/
+dist/
