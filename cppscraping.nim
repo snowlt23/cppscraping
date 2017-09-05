@@ -43,7 +43,7 @@ let doc = """
 cppscraping
 
 Usage:
-  cppscraping [--single] [--pandoc]
+  cppscraping [--single] [--pandoc] [--css=<css>]
 """
 
 proc main() =
@@ -58,16 +58,19 @@ proc main() =
       quit "couldn't find $#" % cpprefdir / p
     mds.add((p, genMd(cpprefdir / p)))
 
+  let css = if args["--css"]: "-c " & $args["--css"] else: ""
+  if args["--css"]:
+    copyFile($args["--css"], "dist" / $args["--css"])
   if args["--single"]:
     let filename = "dist/cpprefjp_collect"
     writeFile(filename & ".md", mds.mapIt(it.s).join("\n"))
     if args["--pandoc"]:
-      discard execShellCmd("pandoc $1.md -o $1.html" % filename)
+      discard execShellCmd("pandoc -s $1.md $2 -o $1.html" % [filename, css])
   else:
     for md in mds:
       let filename = "dist" / md.name
       writeFile(filename & ".md", md.s)
       if args["--pandoc"]:
-        discard execShellCmd("pandoc $1.md -o $1.html" % filename)
+        discard execShellCmd("pandoc -s $1.md $2 -o $1.html" % [filename, css])
 
 main()
