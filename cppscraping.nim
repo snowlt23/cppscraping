@@ -35,8 +35,11 @@ proc genPage*(path: string): string =
 
 proc genMd*(path: string): string =
   result = "## " & path.splitPath.tail & "\n"
-  for fp in walkFiles(path / "*.md"):
-    result &= genPage(fp)
+  for kind, fp in walkDir(path):
+    if kind == pcDir:
+      result &= genMd(fp) & "\n"
+    else:
+      result &= genPage(fp)
 
 let cpprefdir = "site/reference"
 let doc = """
@@ -44,6 +47,7 @@ cppscraping
 
 Usage:
   cppscraping [--single] [--pandoc] [--css=<css>]
+  cppscraping --help
 """
 
 proc main() =
